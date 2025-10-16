@@ -42,7 +42,7 @@ jobs:
       - name: Run app
         run: docker compose up -d
 
-      - name: Smoke test
+      - name: Quick Check test
         run: |
           echo "Waiting for app..."
           sleep 10
