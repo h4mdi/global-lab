@@ -17,6 +17,9 @@ jobs:
     name: Build and Test Voting App
     runs-on: ubuntu-latest
     environment: testing
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      IMAGE_TAG: ${{ github.sha }}
 
     steps:
       - name: Checkout code
@@ -58,6 +61,7 @@ jobs:
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       IMAGE_TAG: ${{ github.sha }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -73,3 +77,21 @@ jobs:
 
       - name: Push images
         run: docker compose push
+
+      - name: Tag versioned images
+        run: |
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/vote:${{ env.IMAGE_TAG }} ${{ secrets.DOCKERHUB_USERNAME }}/vote:v1.0.${{ github.run_number }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/vote:v1.0.${{ github.run_number }}
+
+  deploy-simulate:
+    name: Simulate Deployment
+    needs: push-images
+    runs-on: ubuntu-latest
+    if: success() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Output Deployment Info
+        run: |
+          echo "Build & Push successful!"
+          echo "Images available at docker.io/${{ secrets.DOCKERHUB_USERNAME }}/"
+          echo "Ready for production deployment."
