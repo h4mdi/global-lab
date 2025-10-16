@@ -49,3 +49,25 @@ jobs:
       - name: Stop app
         if: always()
         run: docker compose down -v
+
+  push-images:
+    name: Push Docker Images
+    needs: build-test
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build and tag images
+        run: |
+          docker compose build
+          docker compose images
+          echo "Tagging images as ${{ env.IMAGE_TAG }}"
+
+      - name: Push images
+        run: docker compose push
