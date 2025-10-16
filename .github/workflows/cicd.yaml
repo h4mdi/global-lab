@@ -55,7 +55,9 @@ jobs:
     needs: build-test
     runs-on: ubuntu-latest
     environment: production
-
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      IMAGE_TAG: ${{ github.sha }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

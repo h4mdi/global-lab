@@ -3,6 +3,7 @@ services:
     build:
       context: ./vote
       dockerfile: Dockerfile
+    image: docker.io/${DOCKERHUB_USERNAME}/vote:${IMAGE_TAG}
     depends_on:
       - redis
     networks:
@@ -13,6 +14,7 @@ services:
     build:
       context: ./vote-ui
       dockerfile: Dockerfile
+    image: docker.io/${DOCKERHUB_USERNAME}/vote-ui:${IMAGE_TAG}
     depends_on:
       - vote
     ports:
@@ -24,6 +26,7 @@ services:
     build:
       context: ./result
       dockerfile: Dockerfile
+    image: docker.io/${DOCKERHUB_USERNAME}/result:${IMAGE_TAG}
     depends_on:
       - db
     networks:
@@ -34,6 +37,7 @@ services:
     build:
       context: ./result-ui
       dockerfile: Dockerfile
+    image: docker.io/${DOCKERHUB_USERNAME}/result-ui:${IMAGE_TAG}
     depends_on:
       result:
         condition: service_started
@@ -46,6 +50,7 @@ services:
     build:
       context: ./worker/src
       dockerfile: Dockerfile
+    image: docker.io/${DOCKERHUB_USERNAME}/worker:${IMAGE_TAG}
     depends_on:
       - redis
       - db
